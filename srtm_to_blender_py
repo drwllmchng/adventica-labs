@@ -1,6 +1,10 @@
 # This function takes the file path of the SRTM data
 ## Python to Blender 3.4
 ## Adventica
+##
+import bpy
+import bmesh
+from mathutils import Vector
 def load_srtm(file_path, latitude, longitude, size):
     with open(file_path, 'rb') as f:
         data = f.read()
@@ -28,3 +32,9 @@ def load_srtm(file_path, latitude, longitude, size):
             bm.faces.new([bm.verts[i*size+j], bm.verts[i*size+j+1], bm.verts[(i+1)*size+j+1], bm.verts[(i+1)*size+j]])
     bm.to_mesh(me)
     bm.free()
+file_path = "/path/to/srtm_data.hgt"
+latitude = 0
+longitude = 0
+size = 10
+
+load_srtm(file_path, latitude, longitude, size)
