@@ -1,0 +1,30 @@
+# This function takes the file path of the SRTM data
+## Python to Blender 3.4
+## Adventica
+def load_srtm(file_path, latitude, longitude, size):
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    verts = []
+    for lat in range(latitude, latitude+size):
+        row = []
+        for lon in range(longitude, longitude+size):
+            i = (lat-latitude)*size + (lon-longitude)
+            z = int.from_bytes(data[i*2:i*2+2], byteorder='big', signed=True)
+            row.append((lon, lat, z))
+        verts.append(row)
+    faces = []
+    for i in range(size-1):
+        for j in range(size-1):
+            v1 = (i*size+j, i*size+j+1, (i+1)*size+j+1, (i+1)*size+j)
+            faces.append(v1)
+    me = bpy.data.meshes.new("SRTM")
+    ob = bpy.data.objects.new("SRTM", me)
+    bpy.context.scene.objects.link(ob)
+    bm = bmesh.new()
+    for v in verts:
+        bm.verts.new((v[0][0], v[0][1], v[0][2]))
+    for i in range(size-1):
+        for j in range(size-1):
+            bm.faces.new([bm.verts[i*size+j], bm.verts[i*size+j+1], bm.verts[(i+1)*size+j+1], bm.verts[(i+1)*size+j]])
+    bm.to_mesh(me)
+    bm.free()
