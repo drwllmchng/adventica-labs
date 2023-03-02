@@ -1,0 +1,24 @@
+# Note that the above example downloads SRTM data from the earthlab-srtm S3 bucket hosted by Amazon Web Services (AWS). There are other sources for SRTM data, and you
+# can modify the script accordingly to download from a different source. Also, make sure to check the licensing terms and conditions for the SRTM data you are 
+# downloading, as some may have restrictions on their use.
+
+# install packages
+	!pip install numpy matplotlib rasterio earthpy
+
+# import modules
+	import rasterio
+	from rasterio.plot import show
+	import earthpy.plot as ep
+	import numpy as np
+	import matplotlib.pyplot as plt
+
+# Define the area of interest by specifying the coordinates of the bounding box:
+	xmin, ymin, xmax, ymax = [70, 20, 80, 30] # example coordinates of area of interest
+
+# Download the SRTM data for the specified area of interest using the rasterio package:
+	url = f'https://s3-us-west-2.amazonaws.com/earthlab-srtm/{xmin}/{ymin}/{xmax}/{ymax}.tif'
+  with rasterio.open(url) as src:
+    srtm = src.read(1)
+		
+# Plot the downloaded SRTM data using earthpy and matplotlib:
+	ep.plot_bands(srtm, cmap='Greys', title='SRTM Data') plt.show()
